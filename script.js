@@ -10,14 +10,16 @@ class charType{
 }
 
 //Create a function to ensure string input from the user is a valid number
-function inputValidator(userInput){
+function pwLengthValidator(){
+  var userInput = prompt("Please enter a value that is a whole integer for password length. It must be between 8 - 128 characters long, inclusive.")
   validationLoop = true;
   while(validationLoop){
-    if(Number.isInteger(userInput)){
+    userInput = parseInt(userInput);
+    if(userInput >= 8 && userInput <= 128){
       return userInput;
     }
     else{
-      //Add code to provide an error and reset
+      userInput = prompt("Please enter a value that is a whole integer for password length. It must be between 8 - 128 characters long, inclusive.")
     }
   }
 }
@@ -73,79 +75,81 @@ function reassignChar(possiblePassword, currentObjNames, objectMap){
   
 }
 
-/*
-//Collect what criteria are used for the password 
-pwLength = int(inputValidator("input from user that stands for true/false"));
-lowerReq = Boolean("input from user that stands for true/false");
-upperReq = Boolean("input from user that stands for true/false");
-digitReq = Boolean("input from user that stands for true/false");
-specialReq = Boolean("input from user that stands for true/false");*/
+function generatePassword(){
 
-//test code
-pwLength = 10;
-lowerReq = true;
-upperReq = false;
-digitReq = true;
-specialReq = true;
+  //Collect what criteria are used for the password 
+  var pwLength = pwLengthValidator()
+  var lowerReq = confirm("Would you like lowercase characters in your password?");
+  var upperReq = confirm("Would you like uppercase characters in your password?");
+  var digitReq = confirm("Would you like digits in your password?");
+  var specialReq = confirm("Would you like special characters in your password?");
 
-//Create a map that stores the requirements
-const inputValues = [lowerReq, upperReq, digitReq, specialReq];
+  /*//test code
+  pwLength = 10;
+  lowerReq = true;
+  upperReq = false;
+  digitReq = true;
+  specialReq = true;*/
 
-//Create a map of all objects needed and a list of current names
-var currentObjNames = [];
-var objectMap = new Map();
-for( var index = 0; index < 4; index++){
-  if(inputValues[index] == true && index == 0){
-    objectMap.set("lower", new charType("lower", 97, 122, 0));
-    currentObjNames.push("lower");
+  //Create a map that stores the requirements
+  const inputValues = [lowerReq, upperReq, digitReq, specialReq];
+
+  //Create a map of all objects needed and a list of current names
+  var currentObjNames = [];
+  var objectMap = new Map();
+  for( var index = 0; index < 4; index++){
+    if(inputValues[index] == true && index == 0){
+      objectMap.set("lower", new charType("lower", 97, 122, 0));
+      currentObjNames.push("lower");
+    }
+    if(inputValues[index] == true && index == 1){
+      objectMap.set("upper", new charType("upper", 65, 90, 0));
+      currentObjNames.push("upper");
+    }
+    if(inputValues[index] == true && index == 2){
+      objectMap.set("digit", new charType("digit", 48, 57, 0));
+      currentObjNames.push("digit");
+    }
+    if(inputValues[index] == true && index == 3){
+      objectMap.set("special", new charType("special", [32, 58, 91, 123], [47, 64, 96, 126], 0));
+      currentObjNames.push("special");
+    }
   }
-  if(inputValues[index] == true && index == 1){
-    objectMap.set("upper", new charType("upper", 65, 90, 0));
-    currentObjNames.push("upper");
-  }
-  if(inputValues[index] == true && index == 2){
-    objectMap.set("digit", new charType("digit", 48, 57, 0));
-    currentObjNames.push("digit");
-  }
-  if(inputValues[index] == true && index == 3){
-    objectMap.set("special", new charType("special", [32, 58, 91, 123], [47, 64, 96, 126], 0));
-    currentObjNames.push("special");
-  }
-}
 
-//Loop a number of times equal to the password length, adding a new character for the password
-var possiblePassword = "";
-for(var index = 0; index < pwLength; index++){
-  //Randomize the type of character then record what type of character was added to the password
-  var randomName = currentObjNames[Math.floor(Math.random()*currentObjNames.length)];
+  //Loop a number of times equal to the password length, adding a new character for the password
+  var possiblePassword = "";
+  for(var index = 0; index < pwLength; index++){
+    //Randomize the type of character then record what type of character was added to the password
+    var randomName = currentObjNames[Math.floor(Math.random()*currentObjNames.length)];
 
-  //Update the count for the randomly selected character type
-  objectMap.get(randomName).count = objectMap.get(randomName).count +1
+    //Update the count for the randomly selected character type
+    objectMap.get(randomName).count = objectMap.get(randomName).count +1
 
-  //Update the possiblePassword with itself and append a new character. if it is a special character, randomly select a range
-  if(randomName == "special"){
-    var specialRand = Math.floor(Math.random(4));
-    possiblePassword = possiblePassword + String.fromCharCode(randomize(objectMap.get(randomName).min[specialRand], objectMap.get(randomName).max[specialRand]));
-  }
-  else{
-    possiblePassword = possiblePassword + String.fromCharCode(randomize(objectMap.get(randomName).min, objectMap.get(randomName).max));
-  }
-}
-
-//Verify of the password matches the criteria. If not, adjust it and retest it
-var failedVerification = true;
-while(failedVerification){
-  for(var index = 0; index < currentObjNames.length; index++){
-    if(objectMap.get(currentObjNames[index]).count < 1){
-      failedVerification = true;
-      possiblePassword = reassignChar(possiblePassword, currentObjNames, objectMap);
-      break;
+    //Update the possiblePassword with itself and append a new character. if it is a special character, randomly select a range
+    if(randomName == "special"){
+      var specialRand = Math.floor(Math.random(4));
+      possiblePassword = possiblePassword + String.fromCharCode(randomize(objectMap.get(randomName).min[specialRand], objectMap.get(randomName).max[specialRand]));
     }
     else{
-      failedVerification = false;
+      possiblePassword = possiblePassword + String.fromCharCode(randomize(objectMap.get(randomName).min, objectMap.get(randomName).max));
     }
   }
-  
+
+  //Verify of the password matches the criteria. If not, adjust it and retest it
+  var failedVerification = true;
+  while(failedVerification){
+    for(var index = 0; index < currentObjNames.length; index++){
+      if(objectMap.get(currentObjNames[index]).count < 1){
+        failedVerification = true;
+        possiblePassword = reassignChar(possiblePassword, currentObjNames, objectMap);
+        break;
+      }
+      else{
+        failedVerification = false;
+      }
+    }
+  }
+  return possiblePassword;
 }
 
 // Get references to the #generate element

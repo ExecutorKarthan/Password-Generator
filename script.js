@@ -31,11 +31,12 @@ function randomize(min, max){
 }
 
 //Create a function to update the possible password in case it fails verification
-function reassignChar(possiblePassword, currentObjNames, objectMap){
-  //Select a random letter from the current password to replace
+function reassignChar(possiblePassword, currentObjNames, objectMap, currentIndex){
+  //Select a random letter from the current password to replace.
   var randomVal = Math.floor(Math.random()*possiblePassword.length);
   var toBeChanged = possiblePassword[randomVal];
   var charCode = toBeChanged.charCodeAt(0);
+  
   //Determine the type of letter removed and then adjust the appropriate count
   if(charCode >= 97 && charCode <= 122){
     objectMap.get("lower").count = objectMap.get("lower").count -1
@@ -49,9 +50,10 @@ function reassignChar(possiblePassword, currentObjNames, objectMap){
   else{
     objectMap.get("special").count = objectMap.get("special").count -1
   }
-  //Create a new random character to add to the current possiblePassword
+
+  //Create a new random character to add to the current possiblePassword. Specifically exchange a random character with one that is required bu missing. 
   var newChar = ""
-  var newTypeValName = currentObjNames[Math.floor(Math.random()*currentObjNames.length)]
+  var newTypeValName = currentObjNames[currentIndex];
   if(objectMap.get(newTypeValName) == "special"){
     var specialRand = Math.lower(Math.random(4));
     newChar =  String.fromCharCode(randomize(objectMap.get(newTypeValName).min[specialRand], randomize(objectMap.get(newTypeValName).max[specialRand])));
@@ -61,6 +63,7 @@ function reassignChar(possiblePassword, currentObjNames, objectMap){
     newChar =  String.fromCharCode(randomize(objectMap.get(newTypeValName).min, objectMap.get(newTypeValName).max));
     objectMap.get(newTypeValName).count = objectMap.get(newTypeValName).count + 1
   }
+
   //Splice the new random character into the possiblePassword where the old password was
   if(randomVal == 0){
     possiblePassword = newChar + possiblePassword.substring(1, possiblePassword.length)
@@ -76,18 +79,18 @@ function reassignChar(possiblePassword, currentObjNames, objectMap){
 }
 
 function generatePassword(){
-
-  //Collect what criteria are used for the password 
+ //Collect what criteria are used for the password 
   var pwLength = pwLengthValidator()
   var lowerReq = confirm("Would you like lowercase characters in your password?");
   var upperReq = confirm("Would you like uppercase characters in your password?");
   var digitReq = confirm("Would you like digits in your password?");
   var specialReq = confirm("Would you like special characters in your password?");
 
-  /*//test code
-  pwLength = 10;
+  
+  //test code
+  /*pwLength = 4;
   lowerReq = true;
-  upperReq = false;
+  upperReq = true;
   digitReq = true;
   specialReq = true;*/
 
@@ -141,7 +144,7 @@ function generatePassword(){
     for(var index = 0; index < currentObjNames.length; index++){
       if(objectMap.get(currentObjNames[index]).count < 1){
         failedVerification = true;
-        possiblePassword = reassignChar(possiblePassword, currentObjNames, objectMap);
+        possiblePassword = reassignChar(possiblePassword, currentObjNames, objectMap, index);
         break;
       }
       else{

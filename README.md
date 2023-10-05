@@ -2,8 +2,8 @@
 This is a random password generated that I made. It creates passwords based on user-selected criteria. It requires  minimum of 8 characters and allows for up to 128 characters to be used. 
 
 ## Live Project
-https://executorkarthan.github.io/Alex-Messina-Portfolio/
-![Alt text](Password-Generator-Demo.mp4)
+https://executorkarthan.github.io/Password-Generator/
+![Alt text](Password-Generator-Demo.gif)
 
 ## Description
 This is a tool used to develop randomized passwords for the user. This project helped me understand how to elicit user responses from a HTML webpage, how that data is then linked from the HTML input to variables in the javascript file, as well as how to call functions from the javascript file through the HTML page. I also came to understand the reverse of the above process: how to call functions in javascript and return their outputs to the HTML file. This project required me to understand how to test to see if two different characters match, considering type tests were not effective at discriminating between special characters and letters (upper or lower case). This project also uses randomization in several stages to ensure passwords are produced with higher security in mind.  
